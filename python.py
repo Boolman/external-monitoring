@@ -65,7 +65,7 @@ class ExternalMonitoring(Resource):
                     result = curs.fetchone()
         except Exception as e:
             request.setResponseCode(500)
-            request.write(f'DB ERROR: {e}'.encode())
+            request.write(f'DB ERROR'.encode())
             request.finish()
             return
 
@@ -97,7 +97,7 @@ class ExternalMonitoring(Resource):
             })
         except Exception as e:
             request.setResponseCode(500)
-            request.write(f'ERROR {e}'.encode())
+            request.write(f'API ERROR'.encode())
             request.finish()
             return
 
