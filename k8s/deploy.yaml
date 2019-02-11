@@ -1,0 +1,66 @@
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: external-monitoring
+  namespace: monitoring
+  labels:
+    foo: bar
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        foo: bar
+    spec:
+      containers:
+      - name: python
+        image: boolman/external_monitoring:v1.0
+        ports:
+        - containerPort: 8080
+          protocol: TCP
+        volumeMounts:
+          - name: conf
+            mountPath: /app/config.yaml
+            subPath: config.yaml
+      volumes:
+      - name: conf
+        configMap:
+          name: externalconf
+      restartPolicy: Always
+---
+kind: Service
+apiVersion: v1
+metadata:
+  name: external-checks-service
+  namespace: monitoring
+spec:
+  selector:
+    foo: bar
+  ports:
+    - protocol: TCP
+      port: 8080
+      name: web
+---
+apiVersion: v1
+data:
+  config.yaml: |
+    zabbix:
+      database:
+        dbname: zabbix
+        username: zabbix
+        password: secret
+        host: psql
+        port: 6432
+      api:
+        server: https://zabbix.local
+        username: admin
+        password: admin
+        verify_tls: False
+kind: ConfigMap
+metadata:
+  name: externalconf
+  namespace: monitoring
+
