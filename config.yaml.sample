@@ -1,0 +1,12 @@
+zabbix:
+  database:
+    dbname: foo
+    username: bar
+    password: secret
+    host: localhost
+    port: 5432
+  api:
+    server: zabbix.localhost.local
+    username: accountname
+    password: secret
+    verify_tls: False

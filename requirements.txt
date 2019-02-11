@@ -1,0 +1,4 @@
+twisted
+yamlconfig
+psycopg2
+zabbix_api
