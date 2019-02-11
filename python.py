@@ -95,15 +95,15 @@ class ExternalMonitoring(Resource):
                 'monitored_hosts': True,
                 'extendoutput': True
             })
-        except ZabbixAPIException as e:
-            request.setResponseCode(201)
+        except Exception as e:
+            request.setResponseCode(500)
             request.write(f'ERROR {e}'.encode())
             request.finish()
             return
 
         if len(hosts) < 1:
             request.setResponseCode(201)
-            request.write('NOT OK'.encode())
+            request.write('NOT OK - No hosts found {len(hosts)}'.encode())
             request.finish()
             return
 
