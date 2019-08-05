@@ -63,15 +63,26 @@ class ExternalMonitoring(Resource):
                         "SELECT clock FROM events ORDER BY clock DESC LIMIT 1;"
                     )
                     result = curs.fetchone()
-        except Exception as e:
+                with conn.cursor() as cur:
+                    cur.execute(
+                        "SELECT status FROM actions WHERE actionid=9"
+                    )
+                    result2 = cur.fetchone()
+        except Exception:
             request.setResponseCode(500)
             request.write(f'DB ERROR'.encode())
             request.finish()
             return
 
         if int(result[0]) < (time.time() - (11 * 60)):
-            request.setResponsCode(201)
+            request.setResponseCode(201)
             request.write(f"NOT OK - Last entry in db: {result[0]}".encode())
+            request.finish()
+            return
+
+        if int(result2[0]) != 0:
+            request.setResponseCode(201)
+            request.write(f"PS Action is disabled".encode())
             request.finish()
             return
 
@@ -95,7 +106,7 @@ class ExternalMonitoring(Resource):
                 'monitored_hosts': True,
                 'extendoutput': True
             })
-        except Exception as e:
+        except Exception:
             request.setResponseCode(500)
             request.write(f'API ERROR'.encode())
             request.finish()
